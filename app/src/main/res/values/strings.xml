@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">ElectricityAndMagnetism</string>
+
+    <!--SCREENS -->
+    <string name="home">Home</string>
+    <string name="configuration">Configuration</string>
+    <string name="select_topic">Select topic</string>
+    <string name="fundamentals">Fundamentals</string>
+
+    <string name="back_button_description">Back button description</string>
+    <string name="menu_icon_description">menu_icon_description</string>
+    <string name="home_icon_description">home_icon_description</string>
+
+    <string name="ic_launcher_round">menu_icon_description</string>
+    <string name="siix_icon_description">menu_icon_description</string>
+
+    <string name="drawer_title">menu_icon_description</string>
+    <string name="department">menu_icon_description</string>
+
+    <!-- Home card  -->
+    <string name="electricity_magnetism_home_card_image_description">wip_home_card_image_description</string>
+    <string name="electricity_magnetism_home_card_title">Electricity and Magnetism</string>
+    <string name="electricity_magnetism_home_card_description">App to store notes about the topic and hopefully understand it :\') </string>
+
+    <!-- End Home card  -->
+</resources>
