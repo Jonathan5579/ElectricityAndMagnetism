@@ -1,54 +1,54 @@
 package com.example.electricityandmagnetism.Screens.Fundamentals
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.electricityandmagnetism.AppViewModel
+import com.example.electricityandmagnetism.*
 import com.example.electricityandmagnetism.R
-import com.example.electricityandmagnetism.Screens.cardElementDesechable
-import com.example.electricityandmagnetism.Screens.layersGrid
-import com.example.electricityandmagnetism.textSubTitleColor
-import com.example.electricityandmagnetism.textTitleColor
 
 @Composable
 fun Fundamentals(
     appViewModel: AppViewModel,
     navigateNextScreen: () -> Unit
 ) {
+    /*
     val lateralWeight = 8f
     val contentWeight = 100 - lateralWeight
+    val appState by appViewModel.appState.collectAsState()
+    */
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 0.dp),
+            .fillMaxWidth()
+            //.padding(10.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Spacer(modifier = Modifier.height(0.dp))
 
+        FundamentalsTitleAndContent(
+            navigateNextScreen = navigateNextScreen,
+            appViewModel = appViewModel
+        )
+        /*
         FundamentalsColumn(
             navigateNextScreen = navigateNextScreen,
             appViewModel = appViewModel)
+        */
 
         Spacer(modifier = Modifier.height(40.dp))
     }
@@ -57,99 +57,58 @@ fun Fundamentals(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FundamentalsColumn(
+fun FundamentalsTitleAndContent(
     appViewModel: AppViewModel,
     navigateNextScreen: () -> Unit
 ){
-
     val appState by appViewModel.appState.collectAsState()
+    FundamentalsTitle()
 
-/*
-    Text(
-        "Glossary",
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Start,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 10.dp, start = 20.dp, top =15.dp),
-        color = Color.White
-    )
-    */
+    for (card in appState.fundamentalCards){
+        if (card.id == 2) HorizontalBreak()
+
+        NewFundamentalsCard(
+            appViewModel = appViewModel,
+            fundamentalCard = card
+        )
+    }
+}
+
+
+@Composable
+fun FundamentalsTitle(
+){
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
+        modifier = Modifier.fillMaxWidth(),//.background(Color(0xFF2A43A9)),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
 
-        FundamentalsCard(
-            appViewModel = appViewModel,
-            navigateNextScreen = navigateNextScreen,
-            cardTitle = "Electric charges",
-            cardDescription = "La flsmdpsff",
-        )
+        Box(modifier = Modifier.fillMaxWidth().background(Color(0xFF485DB1))
+        ){
+            Card(
+                modifier = Modifier.padding(50.dp).align(Alignment.Center),
+                elevation = 0.dp,
+                //border = BorderStroke(width = ),
+                shape = RoundedCornerShape(110.dp),
+                backgroundColor = Color(0xFF2A43A9)
 
-        FundamentalsCard(
-            appViewModel = appViewModel,
-            navigateNextScreen = navigateNextScreen,
-            cardTitle = "Electric Field",
-            cardDescription = "...",
-        )
-
-        FundamentalsCard(
-            appViewModel = appViewModel,
-            navigateNextScreen = navigateNextScreen,
-            cardTitle = "Electric field at a point p",
-            cardDescription = "...",
-        )
-
-        HorizontalBreak()
-
-        FundamentalsCard(
-            appViewModel = appViewModel,
-            navigateNextScreen = navigateNextScreen,
-            cardTitle = "Electrostatic Potential Energy",
-            cardDescription = "...",
-        )
-
-        FundamentalsCard(
-            appViewModel = appViewModel,
-            navigateNextScreen = navigateNextScreen,
-            cardTitle = "Electrostatic Potential",
-            cardDescription = "...",
-        )
-
-    }
-
-    /*
-    LazyVerticalGrid(
-        //modifier = Modifier.fillMaxHeight(0.8f),
-        //columns = GridCells.Fixed(2),
-        columns = GridCells.Adaptive(minSize = 180.dp),
-        contentPadding = PaddingValues(10.dp)
-    ) {
-
-        item {
-            FundamentalsCard(
-                appViewModel = appViewModel,
-                navigateNextScreen = navigateNextScreen,
-                cardTitle = "Electric charges",
-                cardDescription = "La flsmdpsff",
-            )
+                ) {
+                Image(
+                    painter = painterResource(id = R.drawable.electric_charges),
+                    contentDescription = "layer icon description",
+                    contentScale = ContentScale.Fit, // crop the image if it's not a square
+                    modifier = Modifier.size(280.dp)
+                )
+            }
         }
 
-        item {
-            FundamentalsCard(
-                appViewModel = appViewModel,
-                navigateNextScreen = navigateNextScreen,
-                cardTitle = "Electric Field",
-                cardDescription = "...",
-            )
-        }
-    }
 
-     */
+        Text(text = "FUNDAMENTALS",
+            fontSize = 24.sp,
+            modifier = Modifier.padding(top = 10.dp),
+            fontFamily = FontFamily.Serif
+        )
+    }
 }
 
 
@@ -157,58 +116,60 @@ fun FundamentalsColumn(
 
 @ExperimentalMaterialApi
 @Composable
-fun FundamentalsCard(
-    cardTitle: String,
-    cardDescription: String,
+fun NewFundamentalsCard(
     appViewModel: AppViewModel,
-    navigateNextScreen: () -> Unit
+    fundamentalCard: FundamentalCard,
 ){
     Card(
-        modifier = Modifier.padding(horizontal = 10.dp, vertical = 15.dp),//start = 10.dp, end = 10.dp, top = 15.dp, bottom = 15.dp),
-        elevation = 8.dp,
-        shape = RoundedCornerShape(11.dp),
+        //modifier = Modifier.padding(horizontal = 10.dp, vertical = 15.dp),
+        modifier = Modifier.padding(vertical = 15.dp),
+        elevation = 1.dp,
+        shape = RoundedCornerShape(5.dp),
         onClick = {
-            //appViewModel.retrieveAuditQuestions(format.ID)
-            navigateNextScreen()
         }
     ) {
         Box(
         ){
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.9f)
+                    .fillMaxWidth()
                     .align(Alignment.CenterStart)
-                    .background(Color(0xFFFFFFFF))
-                    .padding(10.dp),
+                    //.background(Color(0xFFFFFFFF))
+                    .padding(start = 5.dp, end = 0.dp, top = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = cardTitle,
-                    modifier = Modifier.padding(bottom = 5.dp),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF000000)
-
-                )
-
                 Row(
                 ) {
-
-                    FundamentalsImage(R.drawable.electric_field)
-
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .fillMaxWidth()
+                    Column(modifier = Modifier.weight(60f)
                     ) {
-
-                        Text(text = cardDescription,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Normal,
-                            textAlign = TextAlign.Start,
-                            color = Color(0xFF5A5A5A)
+                        Text(text = fundamentalCard.title,
+                            modifier = Modifier.padding(start = 15.dp),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            //color = Color(textTitleColor),
+                            fontFamily = FontFamily.Serif
+                        )
+                        
+                        FundamentalCardContentText(
+                            cardId = fundamentalCard.id,
+                            text = fundamentalCard.content,
+                            appViewModel = appViewModel
                         )
                     }
 
+                    val imageid = getDrawableFromFundamentalCard(imageid = fundamentalCard.imageId)
+                    Card(
+                        elevation = 0.dp,
+                        shape = RoundedCornerShape(26.dp),
+                        modifier = Modifier.padding( 10.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = imageid),
+                            contentDescription = "layer icon description",
+                            contentScale = ContentScale.FillBounds, // crop the image if it's not a square
+                            modifier = Modifier.size(150.dp).weight(40f)
+                        )
+                    }
                 }
             }
 
@@ -218,56 +179,69 @@ fun FundamentalsCard(
 
 
 
-
 @Composable
-fun FundamentalsImage(
-    drawableId: Int
+fun FundamentalCardContentText(
+    text: String,
+    cardId: Int,
+    appViewModel: AppViewModel
 ){
-    Box(
-    ){
-        Card(
-            shape = RoundedCornerShape(2.dp),
-            //modifier = Modifier.fillMaxWidth(),//.background(Color(0xFFFF2D2D)),
-            //backgroundColor = Color(0xFF136083)//0xFF136083
-        ) {
-            /*
-            Icon(
-                modifier = Modifier
-                    .size(95.dp)
-                    .padding(20.dp),//.padding(15.dp)
-                tint = Color(0xFFFFFFFF),
-                imageVector = Icons.Default.Search,
-                contentDescription = "icondescription"
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            appViewModel.updateFundamentalsTextField(
+                cardId = cardId,
+                textfieldText = it
             )
-            */
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = "layer icon description",
+        },
+        colors = TextFieldDefaults.textFieldColors(
+            //textColor = Color.Black,
+            disabledTextColor = Color.Transparent,
+            backgroundColor = MaterialTheme.colors.surface,//MaterialTheme.colors.onSurface.copy(alpha = TextFieldDefaults.BackgroundOpacity),,
+            focusedIndicatorColor = Color(0xFF224997),
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        ),
+        textStyle = TextStyle.Default.copy(
+            fontSize = 18.sp,
+            //textAlign = TextAlign.Justify,
+            //color = Color(textSubTitleColor),
+            fontFamily = FontFamily.Serif
+        ),
 
-                contentScale = ContentScale.FillBounds, // crop the image if it's not a square
-                modifier = Modifier
-                    .size(150.dp)
-                //.padding(20.dp)//.padding(15.dp)
-            )
-        }
-    }
+    )
 }
 
 
+
+
+/*
+/**Funciones de apoyo más que de despliegue de UI*/
 @Composable
-fun HorizontalBreak(){
+fun getDrawableFromFundamentalCard(
+    imageid: Int
+): Int{
+    return when (imageid){
+        RDrawableElectricFillerImage -> R.drawable.electric_filler_image
+        RDrawableElectricCharges -> R.drawable.electric_charges_icon
+        RDrawableElectricField -> R.drawable.electric_field_icon
+        else -> R.drawable.imageplaceholder
+    }
+}
+*/
+@Composable
+fun HorizontalBreak(
+    height: Dp = 2.dp,
+    TopPadding: Dp = 50.dp,
+    BottomPadding: Dp = 50.dp
+){
+
+    Spacer(modifier = Modifier.height(TopPadding))
 
     Spacer(modifier = Modifier
-        .height(50.dp)
-    )
-
-    Spacer(modifier = Modifier
-        .height(2.dp)
+        .height(height)
         .fillMaxWidth()
         .background(Color.Black)
     )
 
-    Spacer(modifier = Modifier
-        .height(50.dp)
-    )
+    Spacer(modifier = Modifier.height(BottomPadding))
 }

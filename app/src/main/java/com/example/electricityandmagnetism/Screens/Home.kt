@@ -73,11 +73,11 @@ fun HomeCard(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 20.dp),
-                color = Color(0xFF000000)
+                color = Color(textTitleColor)
             )
             Text(text = stringResource(id = R.string.electricity_magnetism_home_card_description),
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
-                color = Color(0xFF5A5A5A)
+                color = Color(textSubTitleColor)
             )
         }
     }
