@@ -20,7 +20,10 @@ data class AppUiState(
     /** Fundamentals screen */
     val fundamentalsText: String = "Lecture text",
     val fundamentalCards: MutableList<FundamentalCard> = mutableListOf(),
-    val valForUiUpdate: Int = 0
+    val valForUiUpdate: Int = 0,
+
+    val anyTextHasChanged: Boolean = false,
+    val textFieldVal: String = ""
 )
 
 class AppViewModel: ViewModel() {
@@ -60,7 +63,10 @@ class AppViewModel: ViewModel() {
                 id = cardId,
                 title = "Electrostatic Potential Energy ( µ )",
                 imageId = RDrawableElectrostaticPotentialEnergyIcon,
-                content = "Start with a charge, then bring another charge from infinity to a distance r. µ is the energy that took to assemble that charge together. \nµ ∝ q/r\nGenerally µ = ∫F • dr̂ " //Dot Symbols • ◦ • ‣ ⁃
+                content = "Start with a charge, then bring another charge from infinity to a distance r. µ is the energy that took to assemble that charge together. " +
+                        "\nµ ∝ q/r" +
+                        "\nGenerally µ = ∫F • dr̂" +
+                        "\nElectric field are conservative, which means that the energy to assemble charges is path independent, calculate it tipically from the straight line that join the charges" //Dot Symbols • ◦ • ‣ ⁃
             )
         )
 
@@ -69,7 +75,10 @@ class AppViewModel: ViewModel() {
             FundamentalCard(
                 id = cardId,
                 title = "Electric Potential ( V )",
-                content = "Amount of energy to approach a charge at a distance r per unit charge \nV ∝ q/r\nGenerally V = ∫(F/q) • dr̂ = ∫E • dr̂"
+                imageId = RDrawableElectricPotentialIcon,
+                content = "Amount of energy to approach a charge at a distance r per unit charge " +
+                        "\nV ∝ q/r" +
+                        "\nGenerally V = ∫(F/q) • dr̂ = ∫E • dr̂"
             )
         )
 
@@ -78,6 +87,7 @@ class AppViewModel: ViewModel() {
             FundamentalCard(
                 id = cardId,
                 title = "Equipotential surfaces",
+                imageId = RDrawableEquipotentialSurfacesIcon,
                 content = "for a given charge assembly in space, they produce surfaces that are at the same potential. Equipotential surfaces cannot intersect, that is a violation to conservation of energy." +
                         "\nCharges can move alogn these surfaces without requiring energy."
             )
@@ -88,9 +98,12 @@ class AppViewModel: ViewModel() {
             FundamentalCard(
                 id = cardId,
                 title = "Electric Field and equipotential surfaces",
+                imageId = RDrawableElectricFieldAndEquipotential,
                 content = "Electric field lines will always go trough equipotential surfaces at a perpendicular angle. If not its a contradictory to conservation of energy." +
-                        "\nIn cartesian coordinates they're related by the equation \nE = -∇V\n with spherical coordinates is simply minus the derivative" +
-                        "\nWith this and by the definition of the gradient (points in the direction of maximum increse of function V), you can see that the electric field point towards the value of minor potential"
+                        "\nIn cartesian coordinates they're related by the equation " +
+                        "\nE = -∇V" +
+                        "\nWith spherical coordinates is simply minus the derivative" +
+                        "\nBy the definition of the gradient (points in the direction of maximum increse of function V), you can see that the electric field point towards the value of minor potential"
             )
         )
 
@@ -99,6 +112,7 @@ class AppViewModel: ViewModel() {
             FundamentalCard(
                 id = cardId,
                 title = "Distribution of charge in a conductor",
+                imageId = RDrawableDistributionOfCharges,
                 content = "The surface is an equipotential, but the distribution of charges will only be uniformly distributed if the conductor is a sphere, for any other shape the surface charge density will be higher where the curvature is also high\n" +
                         "\nσ ∝ curvature"
             )
@@ -130,5 +144,19 @@ class AppViewModel: ViewModel() {
         for (fundamentalCard in appState.value.fundamentalCards){
 
         }
+    }
+
+    fun updateTextFieldValue(string: String){
+        _appState.update { currentState ->
+            currentState.copy(
+                textFieldVal = string,
+                anyTextHasChanged = true,
+                valForUiUpdate = appState.value.valForUiUpdate+1
+            )
+        }
+    }
+
+    fun resetanyTextHasChanged(){
+        _appState.update { cS -> cS.copy(anyTextHasChanged=false) }
     }
 }

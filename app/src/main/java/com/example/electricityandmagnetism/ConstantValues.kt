@@ -14,6 +14,10 @@ const val RDrawableElectricFillerImage = 0
 const val RDrawableElectricCharges = 1
 const val RDrawableElectricField = 2
 const val RDrawableElectrostaticPotentialEnergyIcon = 3
+const val RDrawableElectricPotentialIcon = 4
+const val RDrawableEquipotentialSurfacesIcon = 5
+const val RDrawableElectricFieldAndEquipotential = 6
+const val RDrawableDistributionOfCharges = 7
 
 /**Funciones de apoyo más que de despliegue de UI*/
 @Composable
@@ -25,6 +29,10 @@ fun getDrawableFromFundamentalCard(
         RDrawableElectricCharges -> R.drawable.electric_charges_icon
         RDrawableElectricField -> R.drawable.electric_field_icon
         RDrawableElectrostaticPotentialEnergyIcon -> R.drawable.electrostatic_potential_energy_icon
+        RDrawableElectricPotentialIcon -> R.drawable.electric_potential_icon
+        RDrawableEquipotentialSurfacesIcon -> R.drawable.equipotential_surfaces_icon
+        RDrawableElectricFieldAndEquipotential -> R.drawable.e_field_to_equipotential_icon
+        RDrawableDistributionOfCharges -> R.drawable.distribution_of_charge_icon
         else -> R.drawable.imageplaceholder
     }
 }

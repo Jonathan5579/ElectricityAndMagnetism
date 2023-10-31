@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.electricityandmagnetism.Screens.AppScreens
 import com.example.electricityandmagnetism.R
+import com.example.electricityandmagnetism.TopBarBackgroundColor
 
 
 class DrawerScreenVariables(
@@ -53,7 +54,7 @@ fun Drawer(
     currentScreen: AppScreens
 ) {
     Column(modifier = Modifier
-        .background(color = Color(0xFFFEC928))
+        .background(color = Color(TopBarBackgroundColor))
         .padding(start = 30.dp, top = 30.dp, bottom = 20.dp)
         .fillMaxWidth()
     ) {
@@ -139,7 +140,9 @@ fun drawerOptionYellow(
             .fillMaxWidth()
             //.padding(end = 24.dp)
             .clip(shape = RoundedCornerShape(20.dp))
-            .clickable { onDestinationClicked(screenNameNavigation) }
+            .clickable {
+                //onDestinationClicked(screenNameNavigation)
+            }
             .background(Color(0x34FFE38E))
             .padding(start = 20.dp, top = 5.dp, bottom = 5.dp, end = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -173,7 +176,9 @@ fun drawerOption(
             .fillMaxWidth()
             //.padding(end = 24.dp)
             .clip(shape = RoundedCornerShape(20.dp))
-            .clickable { onDestinationClicked(screenNameNavigation) }
+            .clickable {
+                //onDestinationClicked(screenNameNavigation)
+            }
             .padding(start = 20.dp, top = 5.dp, bottom = 5.dp, end = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

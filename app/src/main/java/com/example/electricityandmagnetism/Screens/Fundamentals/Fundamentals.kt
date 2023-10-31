@@ -1,7 +1,9 @@
 package com.example.electricityandmagnetism.Screens.Fundamentals
 
+import android.content.Context
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -9,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -17,18 +20,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.electricityandmagnetism.*
+import com.example.electricityandmagnetism.DataStore.DataStore
 import com.example.electricityandmagnetism.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun Fundamentals(
     appViewModel: AppViewModel,
     navigateNextScreen: () -> Unit
 ) {
-    /*
-    val lateralWeight = 8f
-    val contentWeight = 100 - lateralWeight
+
     val appState by appViewModel.appState.collectAsState()
-    */
 
     Column(
         modifier = Modifier
@@ -52,6 +56,41 @@ fun Fundamentals(
 
         Spacer(modifier = Modifier.height(40.dp))
     }
+    if (appState.anyTextHasChanged){
+        val dataStore = DataStore(LocalContext.current)
+
+        Box(modifier = Modifier.fillMaxSize()
+            .padding(20.dp)
+        ){
+            Box(modifier = Modifier
+                .background(Color(0xFF000000), shape = CircleShape)
+                .size(height = 50.dp, width = 150.dp)
+                .align(Alignment.TopEnd)
+                .clickable {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val stringToSave = appState.textFieldVal
+                        dataStore.saveToken(stringToSave)
+                        appViewModel.resetanyTextHasChanged()
+                    }
+                },
+                contentAlignment = Alignment.Center
+            ){
+                Row(modifier = Modifier.align(Alignment.Center)
+                    .padding(10.dp)
+                    , verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.baseline_save_24),
+                        contentDescription = null,
+                        modifier = Modifier.size(30.dp)
+                    )
+                    Text("Save Content", fontSize = 14.sp, color = Color.White,
+                    modifier = Modifier.padding(start = 10.dp))
+                }
+
+            }
+        }
+    }
 }
 
 
@@ -64,15 +103,60 @@ fun FundamentalsTitleAndContent(
     val appState by appViewModel.appState.collectAsState()
     FundamentalsTitle()
 
+    updatedSavedValue(
+        context = LocalContext.current,
+        appViewModel = appViewModel
+    )
+
     for (card in appState.fundamentalCards){
         if (card.id == 2) HorizontalBreak()
 
-        NewFundamentalsCard(
-            appViewModel = appViewModel,
-            fundamentalCard = card
-        )
+        if (card.content.length < 250 ){
+            HorizontalFundamentalsCard(
+                appViewModel = appViewModel,
+                fundamentalCard = card
+            )
+        }else{
+            VerticalFundamentalCard(
+                appViewModel = appViewModel,
+                fundamentalCard = card
+            )
+        }
+
     }
 }
+
+@Composable
+fun updatedSavedValue(
+    context: Context,
+    appViewModel: AppViewModel
+){
+    val appState by appViewModel.appState.collectAsState()
+    val tokenValue = appState.textFieldVal
+
+    val dataStore = DataStore(context)
+    val tokenText = dataStore.getAccessToken.collectAsState(initial = "")
+
+    TextField(
+        value = tokenValue,
+        onValueChange = {
+            appViewModel.updateTextFieldValue(it)
+        },
+    )
+    Text(text = "value saved in datastore: ${tokenText.value}")
+
+    Button(
+        onClick = {
+            CoroutineScope(Dispatchers.IO).launch {
+                val stringToSave = appState.textFieldVal
+                dataStore.saveToken(stringToSave)
+            }
+        }
+    ) {
+        Text(text = "Update Token")
+    }
+}
+
 
 
 @Composable
@@ -83,10 +167,14 @@ fun FundamentalsTitle(
         horizontalAlignment = Alignment.CenterHorizontally
     ){
 
-        Box(modifier = Modifier.fillMaxWidth().background(Color(0xFF485DB1))
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF485DB1))
         ){
             Card(
-                modifier = Modifier.padding(50.dp).align(Alignment.Center),
+                modifier = Modifier
+                    .padding(50.dp)
+                    .align(Alignment.Center),
                 elevation = 0.dp,
                 //border = BorderStroke(width = ),
                 shape = RoundedCornerShape(110.dp),
@@ -116,7 +204,67 @@ fun FundamentalsTitle(
 
 @ExperimentalMaterialApi
 @Composable
-fun NewFundamentalsCard(
+fun VerticalFundamentalCard(
+    appViewModel: AppViewModel,
+    fundamentalCard: FundamentalCard,
+){
+    Card(
+        //modifier = Modifier.padding(horizontal = 10.dp, vertical = 15.dp),
+        modifier = Modifier.padding(vertical = 15.dp),
+        elevation = 1.dp,
+        shape = RoundedCornerShape(5.dp),
+        onClick = {
+        }
+    ) {
+        Box(
+        ){
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterStart)
+                    //.background(Color(0xFFFFFFFF))
+                    .padding(start = 5.dp, end = 0.dp, top = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Text(text = fundamentalCard.title,
+                    modifier = Modifier.padding(start = 15.dp),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    //color = Color(textTitleColor),
+                    fontFamily = FontFamily.Serif
+                )
+
+                FundamentalCardContentText(
+                    cardId = fundamentalCard.id,
+                    text = fundamentalCard.content,
+                    appViewModel = appViewModel
+                )
+
+                val imageid = getDrawableFromFundamentalCard(imageid = fundamentalCard.imageId)
+                Card(
+                    elevation = 0.dp,
+                    shape = RoundedCornerShape(26.dp),
+                    modifier = Modifier.padding( 10.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = imageid),
+                        contentDescription = "layer icon description",
+                        contentScale = ContentScale.FillBounds, // crop the image if it's not a square
+                        modifier = Modifier
+                            .size(150.dp)
+                            .weight(40f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** The original card*/
+@ExperimentalMaterialApi
+@Composable
+fun HorizontalFundamentalsCard(
     appViewModel: AppViewModel,
     fundamentalCard: FundamentalCard,
 ){
@@ -139,6 +287,7 @@ fun NewFundamentalsCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row(
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(60f)
                     ) {
@@ -149,7 +298,7 @@ fun NewFundamentalsCard(
                             //color = Color(textTitleColor),
                             fontFamily = FontFamily.Serif
                         )
-                        
+
                         FundamentalCardContentText(
                             cardId = fundamentalCard.id,
                             text = fundamentalCard.content,
@@ -167,12 +316,13 @@ fun NewFundamentalsCard(
                             painter = painterResource(id = imageid),
                             contentDescription = "layer icon description",
                             contentScale = ContentScale.FillBounds, // crop the image if it's not a square
-                            modifier = Modifier.size(150.dp).weight(40f)
+                            modifier = Modifier
+                                .size(150.dp)
+                                .weight(40f)
                         )
                     }
                 }
             }
-
         }
     }
 }
