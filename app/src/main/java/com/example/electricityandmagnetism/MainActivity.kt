@@ -7,7 +7,10 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.example.electricityandmagnetism.DataStore.DataStore
 import com.example.electricityandmagnetism.Screens.ElectricityAndMagnetismApp
 import com.example.electricityandmagnetism.ui.theme.ElectricityAndMagnetismTheme
 
@@ -26,7 +29,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    ElectricityAndMagnetismApp(appViewModel)
+
+                    val dataStore = DataStore(LocalContext.current)
+                    val dataStoreJson = dataStore.getAccessToken.collectAsState(initial = "")
+                    appViewModel.buildCardElementsFromSavedDataStore(dataStoreJson.value)
+                    ElectricityAndMagnetismApp(
+                        dataStore = dataStore,
+                        appViewModel = appViewModel
+                    )
                 }
             }
         }

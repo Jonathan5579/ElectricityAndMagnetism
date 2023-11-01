@@ -10,14 +10,14 @@ const val textTitleColor = 0xFF000000
 const val textSubTitleColor = 0xFF5A5A5A
 
 /**Fundamentals Images Ids*/
-const val RDrawableElectricFillerImage = 0
-const val RDrawableElectricCharges = 1
-const val RDrawableElectricField = 2
-const val RDrawableElectrostaticPotentialEnergyIcon = 3
-const val RDrawableElectricPotentialIcon = 4
-const val RDrawableEquipotentialSurfacesIcon = 5
-const val RDrawableElectricFieldAndEquipotential = 6
-const val RDrawableDistributionOfCharges = 7
+const val RDrawableElectricFillerImage = -1
+const val RDrawableElectricCharges = 0
+const val RDrawableElectricField = 1
+const val RDrawableElectrostaticPotentialEnergyIcon = 2
+const val RDrawableElectricPotentialIcon = 3
+const val RDrawableEquipotentialSurfacesIcon = 4
+const val RDrawableElectricFieldAndEquipotential = 5
+const val RDrawableDistributionOfCharges = 6
 
 /**Funciones de apoyo más que de despliegue de UI*/
 @Composable

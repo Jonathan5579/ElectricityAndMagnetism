@@ -17,7 +17,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class DataStore(private val context: Context) {
+class
+DataStore(private val context: Context) {
 
     /** we make sure to wrap the private variables in a companion object so they are not initialized more than once. */
     companion object {

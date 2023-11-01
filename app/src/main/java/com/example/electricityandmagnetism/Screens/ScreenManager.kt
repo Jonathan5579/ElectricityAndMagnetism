@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.electricityandmagnetism.AppViewModel
+import com.example.electricityandmagnetism.DataStore.DataStore
 import com.example.electricityandmagnetism.Drawer.Drawer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -104,6 +105,7 @@ fun appTopBar(
 
 @Composable
 fun ElectricityAndMagnetismApp(
+    dataStore: DataStore,
     appViewModel: AppViewModel = viewModel()
 ){
     //Navigation variables
@@ -143,6 +145,7 @@ fun ElectricityAndMagnetismApp(
         ) {
 
             DrawerAndNavigation(
+                dataStore = dataStore,
                 appViewModel = appViewModel,
                 navController = navController,
                 currentScreen = currentScreen,
@@ -156,6 +159,7 @@ fun ElectricityAndMagnetismApp(
 
 @Composable
 fun DrawerAndNavigation(
+    dataStore: DataStore,
     appViewModel: AppViewModel,
     navController: NavHostController,
     currentScreen: AppScreens,
@@ -223,6 +227,7 @@ fun DrawerAndNavigation(
 
             composable(route = AppScreens.Fundamentals.name){
                 Fundamentals(
+                    dataStore = dataStore,
                     appViewModel = appViewModel,
                     navigateNextScreen = {
                     }

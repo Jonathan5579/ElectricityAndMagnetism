@@ -1,6 +1,11 @@
 package com.example.electricityandmagnetism
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.electricityandmagnetism.JsonManagement.FundamentalsContent
+import com.example.electricityandmagnetism.JsonManagement.JsonFundamentalCard
+import com.example.electricityandmagnetism.JsonManagement.formatJsonToFundamentalsClass
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,13 +28,42 @@ data class AppUiState(
     val valForUiUpdate: Int = 0,
 
     val anyTextHasChanged: Boolean = false,
-    val textFieldVal: String = ""
+
+    val collectedJsonString: String = "",
+    val JsonFumdanemtalsCards: JsonFundamentalCard? = null
 )
 
 class AppViewModel: ViewModel() {
 
     private val _appState = MutableStateFlow(AppUiState())
     val appState: StateFlow<AppUiState> = _appState.asStateFlow()
+
+
+    fun buildCardElementsFromSavedDataStore(jsonString: String){
+
+        if (jsonString == "") return //In case there is nothing in the datastore it'll use the fundamentalCard that are in the init section
+        val fundamentals = formatJsonToFundamentalsClass(jsonString)
+
+        /**Create the fundamentals element list*/
+        val fundamentalCards: MutableList<FundamentalCard> = mutableListOf()
+
+        for (card in fundamentals.data!!){
+
+            if (card.id == null ) continue
+            fundamentalCards.add(
+                FundamentalCard(
+                    id = card.id,
+                    title = card.title,
+                    imageId = card.id, // I use this numbers to find its drawable,  see the constant values to see its Int equivalent
+                    content = card.content
+                )
+            )
+        }
+
+        _appState.update { currentState ->
+            currentState.copy(fundamentalCards = fundamentalCards)
+        }
+    }
 
 
     init{
@@ -123,6 +157,7 @@ class AppViewModel: ViewModel() {
         }
     }
 
+
     fun updateFundamentalsTextField(
         cardId: Int,
         textfieldText: String
@@ -134,23 +169,8 @@ class AppViewModel: ViewModel() {
 
         _appState.update { currentState ->
             currentState.copy(
-                fundamentalCards = fundamentalCards,
-                valForUiUpdate = appState.value.valForUiUpdate+1
-            )
-        }
-    }
-
-    fun formatFundamentalsToJsonString(){
-        for (fundamentalCard in appState.value.fundamentalCards){
-
-        }
-    }
-
-    fun updateTextFieldValue(string: String){
-        _appState.update { currentState ->
-            currentState.copy(
-                textFieldVal = string,
                 anyTextHasChanged = true,
+                fundamentalCards = fundamentalCards,
                 valForUiUpdate = appState.value.valForUiUpdate+1
             )
         }
@@ -159,4 +179,37 @@ class AppViewModel: ViewModel() {
     fun resetanyTextHasChanged(){
         _appState.update { cS -> cS.copy(anyTextHasChanged=false) }
     }
+
+    fun collectCardText(): String{
+        val content: MutableList<FundamentalsContent> = mutableListOf()
+
+        for (card in appState.value.fundamentalCards){
+            content.add(
+                FundamentalsContent(
+                    id = card.id,
+                    title = card.title,
+                    content = card.content
+                )
+            )
+        }
+
+        val fundamentalCard = JsonFundamentalCard(data = content)
+
+        val gson = Gson()
+        val jsonString = gson.toJson(fundamentalCard)
+
+        Log.i("CollectText", "Json: $jsonString")
+        _appState.update { cS-> cS.copy(collectedJsonString= jsonString) }
+        return jsonString
+    }
+
+    fun jsonStringToCardClass(){
+        if (appState.value.collectedJsonString == "") return
+        val fundamentals = formatJsonToFundamentalsClass(appState.value.collectedJsonString)
+
+        _appState.update { cS ->
+            cS.copy(JsonFumdanemtalsCards = fundamentals)
+        }
+    }
 }
+

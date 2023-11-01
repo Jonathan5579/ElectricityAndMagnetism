@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Fundamentals(
+    dataStore: DataStore,
     appViewModel: AppViewModel,
     navigateNextScreen: () -> Unit
 ) {
@@ -45,6 +46,7 @@ fun Fundamentals(
         Spacer(modifier = Modifier.height(0.dp))
 
         FundamentalsTitleAndContent(
+            dataStore = dataStore,
             navigateNextScreen = navigateNextScreen,
             appViewModel = appViewModel
         )
@@ -57,9 +59,10 @@ fun Fundamentals(
         Spacer(modifier = Modifier.height(40.dp))
     }
     if (appState.anyTextHasChanged){
-        val dataStore = DataStore(LocalContext.current)
+        //val dataStore = DataStore(LocalContext.current)
 
-        Box(modifier = Modifier.fillMaxSize()
+        Box(modifier = Modifier
+            .fillMaxSize()
             .padding(20.dp)
         ){
             Box(modifier = Modifier
@@ -68,14 +71,16 @@ fun Fundamentals(
                 .align(Alignment.TopEnd)
                 .clickable {
                     CoroutineScope(Dispatchers.IO).launch {
-                        val stringToSave = appState.textFieldVal
+                        val stringToSave = appViewModel.collectCardText()
+                        //val stringToSave = appState.textFieldVal
                         dataStore.saveToken(stringToSave)
                         appViewModel.resetanyTextHasChanged()
                     }
                 },
                 contentAlignment = Alignment.Center
             ){
-                Row(modifier = Modifier.align(Alignment.Center)
+                Row(modifier = Modifier
+                    .align(Alignment.Center)
                     .padding(10.dp)
                     , verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -87,7 +92,6 @@ fun Fundamentals(
                     Text("Save Content", fontSize = 14.sp, color = Color.White,
                     modifier = Modifier.padding(start = 10.dp))
                 }
-
             }
         }
     }
@@ -97,6 +101,7 @@ fun Fundamentals(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FundamentalsTitleAndContent(
+    dataStore: DataStore,
     appViewModel: AppViewModel,
     navigateNextScreen: () -> Unit
 ){
@@ -104,6 +109,7 @@ fun FundamentalsTitleAndContent(
     FundamentalsTitle()
 
     updatedSavedValue(
+        dataStore = dataStore,
         context = LocalContext.current,
         appViewModel = appViewModel
     )
@@ -128,32 +134,39 @@ fun FundamentalsTitleAndContent(
 
 @Composable
 fun updatedSavedValue(
+    dataStore: DataStore,
     context: Context,
     appViewModel: AppViewModel
 ){
     val appState by appViewModel.appState.collectAsState()
-    val tokenValue = appState.textFieldVal
 
-    val dataStore = DataStore(context)
+    //val dataStore = DataStore(context)
     val tokenText = dataStore.getAccessToken.collectAsState(initial = "")
 
-    TextField(
-        value = tokenValue,
-        onValueChange = {
-            appViewModel.updateTextFieldValue(it)
-        },
-    )
     Text(text = "value saved in datastore: ${tokenText.value}")
 
     Button(
         onClick = {
             CoroutineScope(Dispatchers.IO).launch {
-                val stringToSave = appState.textFieldVal
+                val stringToSave = appViewModel.collectCardText()
+                //val stringToSave = appState.textFieldVal
                 dataStore.saveToken(stringToSave)
             }
         }
     ) {
-        Text(text = "Update Token")
+        Text(text = "Collect and save all text")
+    }
+
+    Button(onClick = { appViewModel.jsonStringToCardClass() }
+    ) { Text(text = "jsonStringToText") }
+
+
+    val jsonFumdanemtalsCards = appState.JsonFumdanemtalsCards ?: return
+    if (jsonFumdanemtalsCards.data == null) return
+    for (card in jsonFumdanemtalsCards.data){
+        Text(text = "title: (#${card.id}) ${card.title}" +
+                "\n${card.content}" +
+                "\n________________")
     }
 }
 

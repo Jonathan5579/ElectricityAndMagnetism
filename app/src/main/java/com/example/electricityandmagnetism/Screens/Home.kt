@@ -20,6 +20,7 @@ import com.example.electricityandmagnetism.AppViewModel
 import com.example.electricityandmagnetism.R
 import com.example.electricityandmagnetism.textSubTitleColor
 import com.example.electricityandmagnetism.textTitleColor
+import kotlin.random.Random
 
 
 /**Muestra la tarjeta del menú y en la sección de BusScreenManager que lo llama verifica si existe una configuración de ruta y turno
@@ -41,6 +42,7 @@ fun HomeScreen(
             Box(modifier = Modifier.weight(contentWeight)) {
                 HomeCard(
                     onHomeCardClicked = onHomeCardClicked,
+
                 )
             }
 
@@ -55,6 +57,11 @@ fun HomeScreen(
 fun HomeCard(
     onHomeCardClicked: () -> Unit
 ){
+
+    val volado = Random.nextInt(0, 100)
+    val homeCardImage: Int = if (volado < 50 ) R.drawable.home_card_image2 else R.drawable.home_card_image
+
+
     Card(
         elevation =10.dp,
         shape = RoundedCornerShape(15.dp),
@@ -63,9 +70,9 @@ fun HomeCard(
     ) {
         Column() {
             Image(
-                painter = painterResource(id = R.drawable.vectorial_field),
+                painter = painterResource(id = homeCardImage),
                 contentDescription = stringResource(id = R.string.electricity_magnetism_home_card_image_description),//"Bus home image",
-                modifier = Modifier.padding(bottom = 20.dp).fillMaxWidth(),
+                modifier = Modifier.padding(bottom = 20.dp).fillMaxWidth().height(250.dp),
                 contentScale = ContentScale.FillBounds
             )
 
