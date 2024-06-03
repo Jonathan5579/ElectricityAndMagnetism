@@ -2,14 +2,13 @@ package com.example.electricityandmagnetism.Screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,21 +26,20 @@ import com.example.electricityandmagnetism.R
 @Composable
 fun SelectTopicScreen(
     appViewModel: AppViewModel,
-    navigateNextScreen: () -> Unit
+    navigateFundamentalsScreen: () -> Unit,
+    navigateGriffithsScreen: () -> Unit
 ) {
-    /*
-    val lateralWeight = 8f
-    val contentWeight = 100 - lateralWeight
-    */
-
     Column(
-        //modifier = Modifier.padding(start = 15.dp, end = 15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Spacer(modifier = Modifier.height(20.dp))
 
-        LayersGrid(navigateNextScreen = navigateNextScreen, appViewModel = appViewModel)
+        LayersGrid(
+            appViewModel = appViewModel,
+            navigateFundamentalsScreen = navigateFundamentalsScreen,
+            navigateGriffithsScreen = navigateGriffithsScreen
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
     }
@@ -51,15 +49,16 @@ fun SelectTopicScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LayersGrid(
-    navigateNextScreen: ()->Unit,
-    appViewModel: AppViewModel
+    appViewModel: AppViewModel,
+    navigateFundamentalsScreen: ()->Unit,
+    navigateGriffithsScreen: () -> Unit
     //areaLayer: MutableList<Pair<String, String>>, //recibe un alista de tuplas de area y layer
 ) {
     //val appState by appViewModel.appState.collectAsState()
 
     QuantumCardElement(
         appViewModel = appViewModel,
-        navigateNextScreen = navigateNextScreen,
+        navigateNextScreen = navigateFundamentalsScreen,
         cardTitle = "Fundamentals",
         cardDescription = "Basic theory about electricity and magnetism",
         drawableId = R.drawable.electric_charges_icon,
@@ -68,24 +67,28 @@ fun LayersGrid(
 
     QuantumCardElement(
         appViewModel = appViewModel,
-        navigateNextScreen = navigateNextScreen,
+        navigateNextScreen = navigateGriffithsScreen,
+        cardTitle = "Griffiths",
+        cardDescription = "Topics about griffhts",
+        drawableId = R.drawable.griffiths_icon,
+        iconBackgroundColor = Color(0xFF000000)
+    )
+
+    QuantumCardElement(
+        appViewModel = appViewModel,
+        navigateNextScreen = {  },
         cardTitle = "?",
         cardDescription = "...",
     )
 
     QuantumCardElement(
         appViewModel = appViewModel,
-        navigateNextScreen = navigateNextScreen,
+        navigateNextScreen = {  },
         cardTitle = "?",
         cardDescription = "...",
     )
+    LaTeXView(latex = "\\sin(x) \\cdot \\cos(y) \\cdot \\sin(x \\cdot y)")
 
-    QuantumCardElement(
-        appViewModel = appViewModel,
-        navigateNextScreen = navigateNextScreen,
-        cardTitle = "?",
-        cardDescription = "...",
-    )
     /*
     LazyVerticalGrid(
         //modifier = Modifier.fillMaxHeight(0.8f),
@@ -125,54 +128,49 @@ fun QuantumCardElement(
     cardTitle: String,
     cardDescription: String,
     drawableId: Int = R.drawable.imageplaceholder,
-    //backgroundColor: Long = 0xFFFFFFFF
+    iconBackgroundColor: Color = Color.Transparent
 ){
     Card(
-        //modifier = Modifier.padding(horizontal = 10.dp, vertical = 15.dp)
         elevation = 0.dp,
-        shape = RoundedCornerShape(11.dp),
         onClick = {
             navigateNextScreen()
         }
     ) {
-        Box(
+        Row(
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier//.padding(15.dp)
-                    .align(Alignment.Center),
-                    //.background(Color(0x50042FF)),
-                verticalAlignment = Alignment.CenterVertically
+
+            QuantumTopicCardImage(
+                drawableId = drawableId,
+                iconBackgroundColor = iconBackgroundColor
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(15.dp)
+                    .fillMaxWidth()
             ) {
-
-                QuantumTopicCardImage(
-                    drawableId = drawableId,
-                    //backgroundColor = backgroundColor
+                Text(
+                    text = cardTitle,
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily.Serif
                 )
-
-                Column(
-                    modifier = Modifier
-                        .padding(15.dp)
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = cardTitle,
-                        fontSize = 24.sp,
-                        //color = Color(0xFF000000),
-                        fontFamily = FontFamily.Serif
-                    )
-                    Text(
-                        text = cardDescription,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        textAlign = TextAlign.Start,
-                        //color = Color(0xFF464646),
-                        fontFamily = FontFamily.Serif
-                    )
-                }
-
+                Text(
+                    text = cardDescription,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Start,
+                    //color = Color(0xFF464646),
+                    fontFamily = FontFamily.Serif
+                )
             }
         }
     }
+    Spacer(modifier = Modifier
+        .fillMaxWidth(0.9f)
+        .height(1.dp)
+        .background(Color(if (isSystemInDarkTheme()) 0xFF313131 else 0xFFE2E2E2))
+    )
 }
 
 
@@ -180,38 +178,38 @@ fun QuantumCardElement(
 @Composable
 fun QuantumTopicCardImage(
     drawableId: Int,
+    iconBackgroundColor: Color
     //backgroundColor: Long
 ){
-    Box(
-    ){
-        Card(
-            modifier = Modifier.padding(10.dp),
-            elevation = 1.dp,
-            shape = RoundedCornerShape(39.dp),
-            //backgroundColor = Color(backgroundColor)
-        ) {
-            /*
-            Icon(
-                modifier = Modifier
-                    .size(95.dp)
-                    .padding(20.dp),//.padding(15.dp)
-                tint = Color(0xFFFFFFFF),
-                imageVector = Icons.Default.Search,
-                contentDescription = "icondescription"
-            )
-            */
-            Image(
-                painter = painterResource(id = drawableId),
-                contentDescription = "layer icon description",
+    Card(
+        modifier = Modifier.padding(10.dp),
+        elevation = 1.dp,
+        shape = RoundedCornerShape(39.dp),
+        backgroundColor = iconBackgroundColor
+        //backgroundColor = Color(backgroundColor)
+    ) {
+        /*
+        Icon(
+            modifier = Modifier
+                .size(95.dp)
+                .padding(20.dp),//.padding(15.dp)
+            tint = Color(0xFFFFFFFF),
+            imageVector = Icons.Default.Search,
+            contentDescription = "icondescription"
+        )
+        */
+        Image(
+            painter = painterResource(id = drawableId),
+            contentDescription = "layer icon description",
 
-                contentScale = ContentScale.FillBounds, // crop the image if it's not a square
-                modifier = Modifier
-                    .size(90.dp)
+            contentScale = ContentScale.FillBounds, // crop the image if it's not a square
+            modifier = Modifier
+                .size(90.dp)
 
-                //.padding(20.dp)//.padding(15.dp)
-            )
-        }
+            //.padding(20.dp)//.padding(15.dp)
+        )
     }
+
 }
 
 

@@ -48,6 +48,11 @@ android {
 
 dependencies {
 
+
+    //For and to display math equations
+    implementation("com.google.accompanist:accompanist-webview:0.31.3-beta")
+    //Change status bar color (upper notification bar)
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
     /** Datastore to store strngs locallly */
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1'
     implementation 'androidx.datastore:datastore-preferences-rxjava2:1.0.0'

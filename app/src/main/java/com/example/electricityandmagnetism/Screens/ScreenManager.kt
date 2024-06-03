@@ -28,15 +28,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.example.electricityandmagnetism.R
 import com.example.electricityandmagnetism.Screens.Fundamentals.Fundamentals
-import com.example.electricityandmagnetism.TopBarBackgroundColor
+import com.example.electricityandmagnetism.Screens.Griffiths.MathBasicsScreen
 import com.example.electricityandmagnetism.TopBarTextColor
+import com.example.electricityandmagnetism.ui.theme.LocalCustomColorsPalette
 
 
 enum class AppScreens(@StringRes val title: Int) {
     Home(title = R.string.home),
     Configuration(title = R.string.configuration),
     SelectTopic(title = R.string.select_topic),
-    Fundamentals(title = R.string.fundamentals)
+    Fundamentals(title = R.string.fundamentals),
+    Griffiths(title = R.string.griffiths)
 }
 
 
@@ -46,11 +48,10 @@ fun appTopBar(
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     openDrawer: () -> Unit,
-    //openHelpMenu: () -> Unit
 ){
     R.string.home
     TopAppBar(
-        backgroundColor = Color(TopBarBackgroundColor),
+        backgroundColor = LocalCustomColorsPalette.current.topBarBackgroundColor,//Color(TopBarBackgroundColor),
         title = {
             Row(verticalAlignment = Alignment.CenterVertically
             ) {
@@ -133,7 +134,6 @@ fun ElectricityAndMagnetismApp(
                 canNavigateBack = navController.previousBackStackEntry != null, //can only navigate back if theres back
                 navigateUp = { navController.navigateUp() },
                 openDrawer = { openDrawer() }
-                //openHelpMenu = { appViewModel.updateMenuCardState() }
             )
         },
     ) { padding -> //esto es solo porque Scaffold me obliga a usar un padding, si lo pones donde sea en principio no hace alguna acción, ambién puedes no usarlo pero te deja una linea roja fea en el código
@@ -141,7 +141,6 @@ fun ElectricityAndMagnetismApp(
         val VariableToUnseeTheErrorOfPadding = padding
         Surface(
             color = MaterialTheme.colors.background
-            //color = Color(0xFFFFFFFF)
         ) {
 
             DrawerAndNavigation(
@@ -202,7 +201,7 @@ fun DrawerAndNavigation(
     ){
         NavHost(
             navController = navController,
-            startDestination = AppScreens.Home.name,
+            startDestination = AppScreens.SelectTopic.name,
         ) {
 
             composable(route = AppScreens.Home.name){
@@ -219,9 +218,8 @@ fun DrawerAndNavigation(
             composable(route = AppScreens.SelectTopic.name){
                 SelectTopicScreen(
                     appViewModel = appViewModel,
-                    navigateNextScreen = {
-                        navController.navigate(AppScreens.Fundamentals.name)
-                    }
+                    navigateFundamentalsScreen = { navController.navigate(AppScreens.Fundamentals.name) },
+                    navigateGriffithsScreen = { navController.navigate(AppScreens.Griffiths.name) }
                 )
             }
 
@@ -234,48 +232,10 @@ fun DrawerAndNavigation(
                 )
             }
 
-            /*
-            composable(route = AppScreens.Configuration.name){
-                ConfigurationScreen(
-                    appViewModel = appViewModel,
-                    //onNextButtonClicked = { navController.navigate(RfIdScreens.NavigationMap.name) }
-                )
+            composable(route = AppScreens.Griffiths.name){
+                MathBasicsScreen(appViewModel)
+
             }
-
-
-            composable(route = AppScreens.SelectLevel.name){
-                selectLayerScreen(appViewModel = appViewModel,
-                    navigateNextScreen = {
-                        //appViewModel.initQuestions()
-                        navController.navigate(AppScreens.StartAuditScreen.name)
-                    }
-                )
-                /*
-                NavigationMapScreen(
-                    navigateReadAndWrite = {
-                        navController.navigate(RfIdScreens.ReadAndWrite.name)
-                    },
-                    navigateGetEPCFromContainer = {
-                        navController.navigate(RfIdScreens.GetEPCFromContainer.name)
-                        appViewModel.setGetEPCFromContainerSettings("GetEPCFromContainer")
-                    },
-                    navigateGetEpcsFromSerialNumber = {
-                        navController.navigate(RfIdScreens.GetEpcsFromSerialNumber.name)
-                        appViewModel.setGetEpcsFromSerialNumberSettings("GetEpcsFromSerialNumber")
-
-                    },
-                    navigateGetInfoFromEPC = {
-                        navController.navigate(RfIdScreens.GetInfoFromEPC.name)
-                        appViewModel.setGetInfoFromEPCSettings("GetInfoFromEPC")
-                    },
-                    navigateWriteTIDIntoEPC = {
-                        navController.navigate(RfIdScreens.WriteTIDIntoEPC.name)
-                        appViewModel.setWriteTIDintoEPCSettings("WriteTIDIntoEPC")
-                    }
-                )
-                */
-            }
-            */
         }
     }
 }
