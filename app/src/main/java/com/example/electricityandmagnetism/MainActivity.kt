@@ -16,18 +16,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.example.electricityandmagnetism.DataStore.DataStore
 import com.example.electricityandmagnetism.Screens.ElectricityAndMagnetismApp
+import com.example.electricityandmagnetism.Screens.ElectricityAndMagnetismApp2
 import com.example.electricityandmagnetism.ui.theme.ElectricityAndMagnetismTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
 
 
-    private val appViewModel: AppViewModel by viewModels()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val appViewModel: AppViewModel by viewModels()
             ElectricityAndMagnetismTheme {
                 // A surface container using the 'background' color from the theme
                 SetStatusBarColor(
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
                     val dataStoreJson = dataStore.getAccessToken.collectAsState(initial = "")
                     Log.i("CollectText", "Stored Json: ${dataStoreJson.value}")
                     appViewModel.buildCardElementsFromSavedDataStore(dataStoreJson.value)
-                    ElectricityAndMagnetismApp(
+                    ElectricityAndMagnetismApp2(
                         dataStore = dataStore,
                         appViewModel = appViewModel
                     )

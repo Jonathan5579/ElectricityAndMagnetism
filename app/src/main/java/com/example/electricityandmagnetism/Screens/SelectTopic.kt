@@ -27,7 +27,8 @@ import com.example.electricityandmagnetism.R
 fun SelectTopicScreen(
     appViewModel: AppViewModel,
     navigateFundamentalsScreen: () -> Unit,
-    navigateGriffithsScreen: () -> Unit
+    navigateGriffithsScreen: () -> Unit,
+    navigateElectrostaticScreen: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -38,7 +39,8 @@ fun SelectTopicScreen(
         LayersGrid(
             appViewModel = appViewModel,
             navigateFundamentalsScreen = navigateFundamentalsScreen,
-            navigateGriffithsScreen = navigateGriffithsScreen
+            navigateGriffithsScreen = navigateGriffithsScreen,
+            navigateElectrostaticScreen = navigateElectrostaticScreen
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -51,7 +53,8 @@ fun SelectTopicScreen(
 fun LayersGrid(
     appViewModel: AppViewModel,
     navigateFundamentalsScreen: ()->Unit,
-    navigateGriffithsScreen: () -> Unit
+    navigateGriffithsScreen: () -> Unit,
+    navigateElectrostaticScreen: () -> Unit
     //areaLayer: MutableList<Pair<String, String>>, //recibe un alista de tuplas de area y layer
 ) {
     //val appState by appViewModel.appState.collectAsState()
@@ -68,15 +71,15 @@ fun LayersGrid(
     QuantumCardElement(
         appViewModel = appViewModel,
         navigateNextScreen = navigateGriffithsScreen,
-        cardTitle = "Griffiths",
-        cardDescription = "Topics about griffhts",
+        cardTitle = "Vector Analysis (Griffiths)",
+        cardDescription = "Math basics for electrodinamics",
         drawableId = R.drawable.griffiths_icon,
         iconBackgroundColor = Color(0xFF000000)
     )
 
     QuantumCardElement(
         appViewModel = appViewModel,
-        navigateNextScreen = {  },
+        navigateNextScreen = { navigateElectrostaticScreen() },
         cardTitle = "?",
         cardDescription = "...",
     )
@@ -87,7 +90,6 @@ fun LayersGrid(
         cardTitle = "?",
         cardDescription = "...",
     )
-    LaTeXView(latex = "\\sin(x) \\cdot \\cos(y) \\cdot \\sin(x \\cdot y)")
 
     /*
     LazyVerticalGrid(

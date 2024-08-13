@@ -14,6 +14,9 @@ data class CustomColorsPalette(
 
     val topBarBackgroundColor: Color = Color.Unspecified,
     val addCardIconColor: Color = Color.Unspecified,
+
+    val fundamentalsTitleBackground: Color = Color.Unspecified,
+
     val defaultMathBasicsTitleBackground: Color = Color.Unspecified,
     val defaultMathBasicsTitleCardBackground: Color = Color.Unspecified
     /*

@@ -1,13 +1,23 @@
 package com.example.electricityandmagnetism.Screens
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.*
+import androidx.compose.material.DrawerState
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalDrawer
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -15,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -24,32 +35,42 @@ import androidx.navigation.compose.rememberNavController
 import com.example.electricityandmagnetism.AppViewModel
 import com.example.electricityandmagnetism.DataStore.DataStore
 import com.example.electricityandmagnetism.Drawer.Drawer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import com.example.electricityandmagnetism.R
 import com.example.electricityandmagnetism.Screens.Fundamentals.Fundamentals
 import com.example.electricityandmagnetism.Screens.Griffiths.MathBasicsScreen
 import com.example.electricityandmagnetism.TopBarTextColor
 import com.example.electricityandmagnetism.ui.theme.LocalCustomColorsPalette
-
-
-enum class AppScreens(@StringRes val title: Int) {
-    Home(title = R.string.home),
-    Configuration(title = R.string.configuration),
-    SelectTopic(title = R.string.select_topic),
-    Fundamentals(title = R.string.fundamentals),
-    Griffiths(title = R.string.griffiths),
-    Electrostatics(title = R.string.electrostatics)
-}
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun appTopBar(
+fun appTopBar2(
     currentScreen: AppScreens,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     openDrawer: () -> Unit,
 ){
+    if (currentScreen == AppScreens.Griffiths) {
+        TopAppBar(
+            backgroundColor = Color(0xFF1A1A1A),//Color(TopBarBackgroundColor),
+            title = {},
+            navigationIcon = {
+                IconButton(onClick = navigateUp) {
+                    Icon(
+                        tint = Color.White,
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button_description)
+                    )
+                }
+            },
+            elevation = 0.dp
+
+        )
+        return
+    }
+
+
     TopAppBar(
         backgroundColor = LocalCustomColorsPalette.current.topBarBackgroundColor,//Color(TopBarBackgroundColor),
         title = {
@@ -85,8 +106,10 @@ fun appTopBar(
     )
 }
 
+/**I think what I tried to do with this change of screen manager is to remove the ugly "DrawerAndNavigation function and just
+ * put all in one place.*/
 @Composable
-fun ElectricityAndMagnetismApp(
+fun ElectricityAndMagnetismApp2(
     dataStore: DataStore,
     appViewModel: AppViewModel = viewModel()
 ){
@@ -99,6 +122,7 @@ fun ElectricityAndMagnetismApp(
         backStackEntry?.destination?.route ?: AppScreens.Home.name
     )
 
+
     //Drawer variables
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -110,104 +134,58 @@ fun ElectricityAndMagnetismApp(
 
     Scaffold(
         topBar = {
-            appTopBar(
+            appTopBar2(
                 currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null, //can only navigate back if theres back
                 navigateUp = { navController.navigateUp() },
                 openDrawer = { openDrawer() }
             )
         },
-    ) { padding -> //esto es solo porque Scaffold me obliga a usar un padding, si lo pones donde sea en principio no hace alguna acción, ambién puedes no usarlo pero te deja una linea roja fea en el código
-
+    ){ padding -> //esto es solo porque Scaffold me obliga a usar un padding, si lo pones donde sea en principio no hace alguna acción, ambién puedes no usarlo pero te deja una linea roja fea en el código
         val VariableToUnseeTheErrorOfPadding = padding
-        Surface(
-            color = MaterialTheme.colors.background
-        ) {
-
-            DrawerAndNavigation(
-                dataStore = dataStore,
-                appViewModel = appViewModel,
-                navController = navController,
-                currentScreen = currentScreen,
-                drawerState = drawerState,
-                scope = scope,
-            )
-        }
-    }
-}
-
-
-@Composable
-fun DrawerAndNavigation(
-    dataStore: DataStore,
-    appViewModel: AppViewModel,
-    navController: NavHostController,
-    currentScreen: AppScreens,
-    drawerState: DrawerState,
-    scope: CoroutineScope,
-){
-    /*
-        //Navigation variables
-        val navController = rememberNavController()
-
-        //backstack entry
-        val backStackEntry by navController.currentBackStackEntryAsState()
-        val currentScreen = RfIdScreens.valueOf(
-            backStackEntry?.destination?.route ?: RfIdScreens.Home.name
-        )
-        //Drawer variables
-        val drawerState = rememberDrawerState(DrawerValue.Closed)
-        val scope = rememberCoroutineScope()
-        val openDrawer = {
-            scope.launch {
-                drawerState.open()
-            }
-        }
-        */
-
-    /**
-    ModalDrawer(
-        drawerState = drawerState,
-        gesturesEnabled = drawerState.isOpen,
-        drawerContent = {
-            Drawer(
-                onDestinationClicked = { route ->
-                    scope.launch { drawerState.close() }
-                    navController.navigate(route) {
-                        //popUpTo(navController.graph.startDestinationId)
-                        popUpTo = navController.graph.startDestinationId
-                        launchSingleTop = true
-                    }
-                },
-                currentScreen = currentScreen
-            )
-        }
-    ){
         NavHost(
             navController = navController,
-            startDestination = AppScreens.SelectTopic.name,
+            startDestination = AppScreens.Home.name,
         ) {
-
             composable(route = AppScreens.Home.name){
-                HomeScreen(
-                    appViewModel = appViewModel,
-                    onHomeCardClicked = {
-                        navController.navigate(AppScreens.SelectTopic.name)
-                        //appViewModel.retreiveFormatsData()
-                        //appViewModel.matchRFIDCurrentConfiguration()
+
+                ModalDrawer(
+                    drawerState = drawerState,
+                    gesturesEnabled = drawerState.isOpen,
+                    drawerContent = {
+                        Drawer(
+                            onDestinationClicked = { route ->
+                                scope.launch { drawerState.close() }
+                                navController.navigate(route) {
+                                    //popUpTo(navController.graph.startDestinationId)
+                                    popUpTo = navController.graph.startDestinationId
+                                    launchSingleTop = true
+                                }
+                            },
+                            currentScreen = currentScreen
+                        )
                     }
-                )
+                ){
+                    HomeScreen(
+                        appViewModel = appViewModel,
+                        onHomeCardClicked = {
+                            navController.navigate(AppScreens.SelectTopic.name)
+                        }
+                    )
+                }
             }
 
             composable(route = AppScreens.SelectTopic.name){
                 SelectTopicScreen(
                     appViewModel = appViewModel,
                     navigateFundamentalsScreen = { navController.navigate(AppScreens.Fundamentals.name) },
-                    navigateGriffithsScreen = { navController.navigate(AppScreens.Griffiths.name) }
+                    navigateGriffithsScreen = { navController.navigate(AppScreens.Griffiths.name) },
+                    navigateElectrostaticScreen = { navController.navigate(AppScreens.Electrostatics.name)}
                 )
             }
 
             composable(route = AppScreens.Fundamentals.name){
+
                 Fundamentals(
                     dataStore = dataStore,
                     appViewModel = appViewModel,
@@ -217,9 +195,30 @@ fun DrawerAndNavigation(
             }
 
             composable(route = AppScreens.Griffiths.name){
-                MathBasicsScreen(appViewModel)
-
+                MathBasicsScreen()
             }
         }
-    }*/
+    }
+
+
+}
+
+
+@Composable
+private fun customAppTopBar(
+    navigateUp: () -> Unit,
+){
+    TopAppBar(
+        backgroundColor = Color(0xFF7C9486),
+        title = {  },
+        navigationIcon = {
+                IconButton(onClick = navigateUp) {
+                    Icon(
+                        tint = Color.White,
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button_description)
+                    )
+                }
+        }
+    )
 }

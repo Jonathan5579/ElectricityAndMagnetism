@@ -150,7 +150,7 @@ fun FundamentalsTitle(
 
         Box(modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF485DB1))
+            .background(Color(0xFF151F47))
         ){
             Card(
                 modifier = Modifier
@@ -158,14 +158,14 @@ fun FundamentalsTitle(
                     .align(Alignment.Center),
                 elevation = 0.dp,
                 shape = RoundedCornerShape(110.dp),
-                backgroundColor = Color(0xFF2A43A9)
+                //backgroundColor = Color(0xFF2A43A9)
 
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.electric_charges_icon),
                     contentDescription = "layer icon description",
-                    contentScale = ContentScale.Fit, // crop the image if it's not a square
-                    modifier = Modifier.size(280.dp)
+                    contentScale = ContentScale.FillBounds, // crop the image if it's not a square
+                    modifier = Modifier.size(280.dp),
                 )
             }
         }
